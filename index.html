@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ImageConvert Pro — Free Online Image Format Converter</title>
+  <meta name="description" content="Convert images between JPG, PNG, WebP, GIF, BMP, TIFF and ICO instantly in your browser. No upload, no signup, 100% free." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); }
+    .glass { background: rgba(255,255,255,0.07); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); }
+    .glass-light { background: rgba(255,255,255,0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.3); }
+    .glow { box-shadow: 0 0 40px rgba(139,92,246,0.35); }
+    .glow-sm { box-shadow: 0 0 20px rgba(139,92,246,0.25); }
+    .btn-primary { background: linear-gradient(135deg, #7c3aed, #4f46e5); transition: all .3s; }
+    .btn-primary:hover { background: linear-gradient(135deg, #6d28d9, #4338ca); transform: translateY(-1px); box-shadow: 0 8px 25px rgba(124,58,237,0.45); }
+    .drop-zone { border: 2px dashed rgba(139,92,246,0.5); transition: all .3s; }
+    .drop-zone.dragover { border-color: #7c3aed; background: rgba(124,58,237,0.1); transform: scale(1.01); }
+    .format-btn { transition: all .25s; border: 2px solid rgba(139,92,246,0.3); }
+    .format-btn:hover, .format-btn.active { background: linear-gradient(135deg,#7c3aed,#4f46e5); border-color: transparent; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+    .preview-img { max-height: 220px; object-fit: contain; border-radius: 12px; }
+    .progress-bar { background: linear-gradient(90deg, #7c3aed, #06b6d4); border-radius: 99px; transition: width .4s ease; }
+    .card-hover { transition: transform .3s, box-shadow .3s; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .tag { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .float { animation: float 4s ease-in-out infinite; }
+    @keyframes pulse-ring { 0%{transform:scale(.9);opacity:.7} 100%{transform:scale(1.4);opacity:0} }
+    .pulse-ring::before { content:''; position:absolute; inset:0; border-radius:50%; border:2px solid #7c3aed; animation: pulse-ring 2s ease-out infinite; }
+    .shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 2s infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #1e1b4b; } ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="relative w-9 h-9 pulse-ring">
+            <div class="w-9 h-9 rounded-xl btn-primary flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+          <span class="text-white font-bold text-lg tracking-tight">ImageConvert <span class="text-violet-400">Pro</span></span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#converter" class="text-gray-300 hover:text-white text-sm font-medium transition-colors">Converter</a>
+          <a href="#features" class="text-gray-300 hover:text-white text-sm font-medium transition-colors">Features</a>
+          <a href="#converter" class="btn-primary text-white text-sm font-semibold px-5 py-2 rounded-xl">Get Started</a>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden text-gray-300 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2">
+      <a href="#converter" class="block text-gray-300 hover:text-white text-sm py-2">Converter</a>
+      <a href="#features" class="block text-gray-300 hover:text-white text-sm py-2">Features</a>
+    </div>
+  </nav>
+  <!-- HERO -->
+  <section class="gradient-bg min-h-screen flex items-center pt-16 overflow-hidden relative">
+    <!-- background orbs -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-violet-600 rounded-full opacity-10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-600 rounded-full opacity-10 blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-700 rounded-full opacity-5 blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- left text -->
+        <div class="text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 tag text-xs font-semibold px-4 py-2 rounded-full mb-6">
+            <span class="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></span>
+            Free · No Sign-up · 100% Local
+          </div>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+            Professional<br/>
+            <span class="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Image Format</span><br/>
+            Converter
+          </h1>
+          <p class="text-gray-400 text-lg leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+            Convert between JPG, PNG, WebP, GIF, BMP, TIFF, ICO and more — all processed locally in your browser. Fast, private, and completely free.
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+            <a href="#converter" class="btn-primary text-white font-semibold px-8 py-3.5 rounded-2xl text-base glow inline-flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+              Start Converting
+            </a>
+            <a href="#features" class="glass text-white font-semibold px-8 py-3.5 rounded-2xl text-base inline-flex items-center gap-2 hover:bg-white/10 transition-colors">
+              Learn More
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </a>
+          </div>
+          <!-- stats -->
+          <div class="flex gap-8 mt-12 justify-center lg:justify-start">
+            <div>
+              <div class="text-2xl font-bold text-white">10+</div>
+              <div class="text-gray-500 text-sm">Formats</div>
+            </div>
+            <div class="w-px bg-white/10"></div>
+            <div>
+              <div class="text-2xl font-bold text-white">100%</div>
+              <div class="text-gray-500 text-sm">Local</div>
+            </div>
+            <div class="w-px bg-white/10"></div>
+            <div>
+              <div class="text-2xl font-bold text-white">Free</div>
+              <div class="text-gray-500 text-sm">Forever</div>
+            </div>
+          </div>
+        </div>
+        <!-- right illustration -->
+        <div class="hidden lg:flex justify-center items-center">
+          <div class="relative float">
+            <div class="w-80 h-80 glass rounded-3xl glow flex flex-col items-center justify-center gap-4 p-8">
+              <div class="grid grid-cols-3 gap-3">
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-violet-400 font-bold text-sm">JPG</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-cyan-400 font-bold text-sm">PNG</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-pink-400 font-bold text-sm">WebP</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-yellow-400 font-bold text-sm">GIF</div>
+                <div class="w-16 h-16 btn-primary rounded-2xl flex items-center justify-center">
+                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                  </svg>
+                </div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-green-400 font-bold text-sm">BMP</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-orange-400 font-bold text-sm">ICO</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-blue-400 font-bold text-sm">TIFF</div>
+                <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center text-red-400 font-bold text-sm">SVG</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs">
+      <span>Scroll down</span>
+      <div class="w-5 h-8 border border-gray-600 rounded-full flex justify-center pt-1.5">
+        <div class="w-1 h-2 bg-violet-400 rounded-full animate-bounce"></div>
+      </div>
+    </div>
+  </section>
+  <!-- CONVERTER -->
+  <section id="converter" class="gradient-bg py-24 relative">
+    <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <!-- section header -->
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-2 tag text-xs font-semibold px-4 py-2 rounded-full mb-4">
+          <svg class="w-3.5 h-3.5 text-violet-400" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/></svg>
+          Converter
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Upload &amp; Convert Your Images</h2>
+        <p class="text-gray-400 text-base max-w-xl mx-auto">Drag and drop or click to upload, choose a target format, and download your converted files instantly.</p>
+      </div>
+
+      <!-- main card -->
+      <div class="glass rounded-3xl p-6 sm:p-10 glow">
+        <!-- step 1: upload -->
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 btn-primary rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0">1</div>
+            <h3 class="text-white font-semibold text-lg">Upload Images</h3>
+          </div>
+          <div id="dropZone" class="drop-zone rounded-2xl p-10 text-center cursor-pointer relative overflow-hidden" onclick="document.getElementById('fileInput').click()">
+            <div class="shimmer absolute inset-0 rounded-2xl pointer-events-none opacity-0" id="shimmerOverlay"></div>
+            <input type="file" id="fileInput" accept="image/*" multiple class="hidden" />
+            <div id="uploadPrompt">
+              <div class="w-16 h-16 glass rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+              </div>
+              <p class="text-white font-semibold text-base mb-1">Drag &amp; drop images here, or click to browse</p>
+              <p class="text-gray-500 text-sm">Supports JPG, PNG, WebP, GIF, BMP, TIFF, ICO · Max 50MB</p>
+            </div>
+            <div id="previewArea" class="hidden">
+              <div id="previewGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+              <button onclick="event.stopPropagation(); document.getElementById('fileInput').click()" class="mt-4 text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors">+ Add more images</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- step 2: format select -->
+        <div class="mb-8" id="step2" style="opacity:0.4;pointer-events:none;transition:opacity .3s">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 btn-primary rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0">2</div>
+            <h3 class="text-white font-semibold text-lg">Choose Target Format</h3>
+          </div>
+          <div class="flex flex-wrap gap-3" id="formatBtns">
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/jpeg" data-ext="jpg">JPG</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/png" data-ext="png">PNG</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/webp" data-ext="webp">WebP</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/gif" data-ext="gif">GIF</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/bmp" data-ext="bmp">BMP</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/tiff" data-ext="tiff">TIFF</button>
+            <button class="format-btn text-gray-300 font-semibold px-5 py-2.5 rounded-xl text-sm" data-fmt="image/x-icon" data-ext="ico">ICO</button>
+          </div>
+          <!-- quality slider (jpg/webp) -->
+          <div id="qualityRow" class="hidden mt-5 flex items-center gap-4">
+            <label class="text-gray-400 text-sm font-medium whitespace-nowrap">Quality</label>
+            <input type="range" id="qualitySlider" min="10" max="100" value="92" class="flex-1 accent-violet-500" />
+            <span id="qualityVal" class="text-violet-400 font-semibold text-sm w-10 text-right">92%</span>
+          </div>
+        </div>
+
+        <!-- step 3: convert -->
+        <div id="step3" style="opacity:0.4;pointer-events:none;transition:opacity .3s">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 btn-primary rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0">3</div>
+            <h3 class="text-white font-semibold text-lg">Convert &amp; Download</h3>
+          </div>
+          <!-- progress -->
+          <div id="progressWrap" class="hidden mb-5">
+            <div class="flex justify-between text-sm text-gray-400 mb-2">
+              <span id="progressLabel">Converting…</span>
+              <span id="progressPct">0%</span>
+            </div>
+            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+              <div class="progress-bar h-full" id="progressBar" style="width:0%"></div>
+            </div>
+          </div>
+          <!-- result list -->
+          <div id="resultList" class="space-y-3 mb-6 hidden"></div>
+          <!-- action buttons -->
+          <div class="flex flex-wrap gap-4">
+            <button id="convertBtn" class="btn-primary text-white font-semibold px-8 py-3.5 rounded-2xl text-base inline-flex items-center gap-2 glow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+              </svg>
+              Convert Now
+            </button>
+            <button id="downloadAllBtn" class="hidden glass text-white font-semibold px-8 py-3.5 rounded-2xl text-base inline-flex items-center gap-2 hover:bg-white/10 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              Download All
+            </button>
+            <button id="resetBtn" class="hidden text-gray-500 hover:text-gray-300 font-medium px-4 py-3.5 rounded-2xl text-sm transition-colors">
+              Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- FEATURES -->
+  <section id="features" class="gradient-bg py-24 relative">
+    <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 tag text-xs font-semibold px-4 py-2 rounded-full mb-4">
+          <svg class="w-3.5 h-3.5 text-violet-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+          Features
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Why Choose ImageConvert Pro</h2>
+        <p class="text-gray-400 text-base max-w-xl mx-auto">Built for speed and privacy — no server uploads, no accounts. Everything runs right in your browser.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- card 1 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl btn-primary flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Privacy First</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Images are processed entirely in your browser. Nothing is ever uploaded to a server — your files stay yours.</p>
+        </div>
+        <!-- card 2 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Lightning Fast</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Powered by the HTML5 Canvas API — conversions happen in milliseconds with no network round-trip required.</p>
+        </div>
+        <!-- card 3 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Batch Processing</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Upload multiple images at once, convert them all to the same target format, and download everything in one click.</p>
+        </div>
+        <!-- card 4 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Adjustable Quality</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">JPG and WebP support a custom quality slider (10–100%) so you can balance file size and sharpness exactly as needed.</p>
+        </div>
+        <!-- card 5 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Wide Format Support</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Supports JPG, PNG, WebP, GIF, BMP, TIFF, ICO and more — covering virtually every image format you'll encounter.</p>
+        </div>
+        <!-- card 6 -->
+        <div class="glass rounded-2xl p-7 card-hover">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">No Install Needed</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Runs entirely in the browser — no software, no plugins, no setup. Works on Windows, Mac, Linux, and mobile.</p>
+        </div>
+      </div>
+
+      <!-- format support table -->
+      <div class="mt-16 glass rounded-2xl p-8">
+        <h3 class="text-white font-bold text-xl mb-6 text-center">Supported Formats</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          <div class="text-center p-4 rounded-xl" style="background:rgba(124,58,237,0.15)">
+            <div class="text-violet-400 font-bold text-lg">JPG</div>
+            <div class="text-gray-500 text-xs mt-1">Lossy</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(6,182,212,0.12)">
+            <div class="text-cyan-400 font-bold text-lg">PNG</div>
+            <div class="text-gray-500 text-xs mt-1">Lossless</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(236,72,153,0.12)">
+            <div class="text-pink-400 font-bold text-lg">WebP</div>
+            <div class="text-gray-500 text-xs mt-1">Modern</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(234,179,8,0.12)">
+            <div class="text-yellow-400 font-bold text-lg">GIF</div>
+            <div class="text-gray-500 text-xs mt-1">Animated</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(34,197,94,0.12)">
+            <div class="text-green-400 font-bold text-lg">BMP</div>
+            <div class="text-gray-500 text-xs mt-1">Bitmap</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(59,130,246,0.12)">
+            <div class="text-blue-400 font-bold text-lg">TIFF</div>
+            <div class="text-gray-500 text-xs mt-1">High Quality</div>
+          </div>
+          <div class="text-center p-4 rounded-xl" style="background:rgba(249,115,22,0.12)">
+            <div class="text-orange-400 font-bold text-lg">ICO</div>
+            <div class="text-gray-500 text-xs mt-1">Icon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- FOOTER -->
+  <footer class="gradient-bg border-t border-white/10 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-white font-bold">ImageConvert <span class="text-violet-400">Pro</span></span>
+        </div>
+        <p class="text-gray-500 text-sm text-center">All processing happens locally in your browser. No uploads, no accounts, always free.</p>
+        <div class="flex items-center gap-2 text-gray-600 text-xs">
+          <svg class="w-4 h-4 text-violet-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Private &amp; Secure
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────
+    let files = [];
+    let selectedFmt = null;
+    let selectedExt = null;
+    let convertedBlobs = [];
+
+    // ── DOM refs ───────────────────────────────────────────────────────────
+    const dropZone      = document.getElementById('dropZone');
+    const fileInput     = document.getElementById('fileInput');
+    const uploadPrompt  = document.getElementById('uploadPrompt');
+    const previewArea   = document.getElementById('previewArea');
+    const previewGrid   = document.getElementById('previewGrid');
+    const step2         = document.getElementById('step2');
+    const step3         = document.getElementById('step3');
+    const formatBtns    = document.querySelectorAll('.format-btn');
+    const qualityRow    = document.getElementById('qualityRow');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityVal    = document.getElementById('qualityVal');
+    const convertBtn    = document.getElementById('convertBtn');
+    const downloadAllBtn= document.getElementById('downloadAllBtn');
+    const resetBtn      = document.getElementById('resetBtn');
+    const progressWrap  = document.getElementById('progressWrap');
+    const progressBar   = document.getElementById('progressBar');
+    const progressPct   = document.getElementById('progressPct');
+    const progressLabel = document.getElementById('progressLabel');
+    const resultList    = document.getElementById('resultList');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu    = document.getElementById('mobileMenu');
+
+    // ── Mobile menu ────────────────────────────────────────────────────────
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // ── Drag & drop ────────────────────────────────────────────────────────
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles([...e.dataTransfer.files]);
+    });
+
+    fileInput.addEventListener('change', () => handleFiles([...fileInput.files]));
+
+    // ── File handling ──────────────────────────────────────────────────────
+    function handleFiles(newFiles) {
+      const imageFiles = newFiles.filter(f => f.type.startsWith('image/'));
+      if (!imageFiles.length) return;
+      files = [...files, ...imageFiles];
+      renderPreviews();
+      unlockStep(step2);
+    }
+
+    function renderPreviews() {
+      previewGrid.innerHTML = '';
+      files.forEach((file, i) => {
+        const url = URL.createObjectURL(file);
+        const div = document.createElement('div');
+        div.className = 'relative group';
+        div.innerHTML = `
+          <div class="glass rounded-xl overflow-hidden aspect-square flex items-center justify-center">
+            <img src="${url}" class="preview-img w-full h-full object-cover" alt="${file.name}" />
+          </div>
+          <div class="mt-1.5 text-gray-400 text-xs truncate px-1">${file.name}</div>
+          <button onclick="removeFile(${i})" class="absolute top-1 right-1 w-6 h-6 bg-red-500/80 hover:bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+        `;
+        previewGrid.appendChild(div);
+      });
+      uploadPrompt.classList.add('hidden');
+      previewArea.classList.remove('hidden');
+    }
+
+    function removeFile(i) {
+      files.splice(i, 1);
+      if (files.length === 0) {
+        uploadPrompt.classList.remove('hidden');
+        previewArea.classList.add('hidden');
+        lockStep(step2);
+        lockStep(step3);
+        selectedFmt = null;
+        formatBtns.forEach(b => b.classList.remove('active'));
+      } else {
+        renderPreviews();
+      }
+    }
+
+    // ── Format selection ───────────────────────────────────────────────────
+    formatBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        formatBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedFmt = btn.dataset.fmt;
+        selectedExt = btn.dataset.ext;
+        const needsQuality = ['image/jpeg','image/webp'].includes(selectedFmt);
+        qualityRow.classList.toggle('hidden', !needsQuality);
+        unlockStep(step3);
+        // reset previous results
+        resultList.innerHTML = '';
+        resultList.classList.add('hidden');
+        downloadAllBtn.classList.add('hidden');
+        resetBtn.classList.add('hidden');
+        convertedBlobs = [];
+      });
+    });
+
+    qualitySlider.addEventListener('input', () => {
+      qualityVal.textContent = qualitySlider.value + '%';
+    });
+
+    // ── Step lock/unlock ───────────────────────────────────────────────────
+    function unlockStep(el) {
+      el.style.opacity = '1';
+      el.style.pointerEvents = 'auto';
+    }
+    function lockStep(el) {
+      el.style.opacity = '0.4';
+      el.style.pointerEvents = 'none';
+    }
+
+    // ── Conversion ─────────────────────────────────────────────────────────
+    convertBtn.addEventListener('click', async () => {
+      if (!files.length || !selectedFmt) return;
+      convertedBlobs = [];
+      resultList.innerHTML = '';
+      resultList.classList.remove('hidden');
+      progressWrap.classList.remove('hidden');
+      downloadAllBtn.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+      convertBtn.disabled = true;
+      convertBtn.style.opacity = '0.6';
+
+      const quality = parseInt(qualitySlider.value) / 100;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const pct = Math.round(((i) / files.length) * 100);
+        progressBar.style.width = pct + '%';
+        progressPct.textContent = pct + '%';
+        progressLabel.textContent = `Converting ${i + 1} of ${files.length}…`;
+
+        try {
+          const blob = await convertImage(file, selectedFmt, quality);
+          convertedBlobs.push({ blob, name: baseName(file.name) + '.' + selectedExt });
+          appendResult(file.name, blob, baseName(file.name) + '.' + selectedExt, true);
+        } catch (err) {
+          appendResult(file.name, null, null, false, err.message);
+        }
+      }
+
+      progressBar.style.width = '100%';
+      progressPct.textContent = '100%';
+      progressLabel.textContent = 'All done!';
+
+      convertBtn.disabled = false;
+      convertBtn.style.opacity = '1';
+      if (convertedBlobs.length > 1) downloadAllBtn.classList.remove('hidden');
+      resetBtn.classList.remove('hidden');
+    });
+
+    function convertImage(file, mimeType, quality) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width  = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            // white background for formats that don't support transparency
+            if (['image/jpeg','image/bmp'].includes(mimeType)) {
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            ctx.drawImage(img, 0, 0);
+            const useQuality = ['image/jpeg','image/webp'].includes(mimeType) ? quality : undefined;
+            canvas.toBlob(blob => {
+              URL.revokeObjectURL(url);
+              if (blob) resolve(blob);
+              else reject(new Error('Conversion failed'));
+            }, mimeType, useQuality);
+          } catch(e) { reject(e); }
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image')); };
+        img.src = url;
+      });
+    }
+
+    function baseName(filename) {
+      return filename.replace(/\.[^/.]+$/, '');
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function appendResult(origName, blob, outName, success, errMsg) {
+      const div = document.createElement('div');
+      div.className = 'glass rounded-xl px-5 py-3.5 flex items-center justify-between gap-4';
+      if (success) {
+        const objUrl = URL.createObjectURL(blob);
+        div.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(34,197,94,0.15)">
+              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="min-w-0">
+              <div class="text-white text-sm font-medium truncate">${outName}</div>
+              <div class="text-gray-500 text-xs">${formatBytes(blob.size)}</div>
+            </div>
+          </div>
+          <a href="${objUrl}" download="${outName}" class="btn-primary text-white text-xs font-semibold px-4 py-2 rounded-xl flex-shrink-0 inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download
+          </a>`;
+      } else {
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.15)">
+              <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </div>
+            <div>
+              <div class="text-white text-sm font-medium">${origName}</div>
+              <div class="text-red-400 text-xs">${errMsg || 'Conversion failed'}</div>
+            </div>
+          </div>`;
+      }
+      resultList.appendChild(div);
+    }
+
+    // ── Download all ───────────────────────────────────────────────────────
+    downloadAllBtn.addEventListener('click', async () => {
+      for (const { blob, name } of convertedBlobs) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        await new Promise(r => setTimeout(r, 200));
+      }
+    });
+
+    // ── Reset ──────────────────────────────────────────────────────────────
+    resetBtn.addEventListener('click', () => {
+      files = [];
+      convertedBlobs = [];
+      selectedFmt = null;
+      selectedExt = null;
+      fileInput.value = '';
+      previewGrid.innerHTML = '';
+      previewArea.classList.add('hidden');
+      uploadPrompt.classList.remove('hidden');
+      resultList.innerHTML = '';
+      resultList.classList.add('hidden');
+      progressWrap.classList.add('hidden');
+      progressBar.style.width = '0%';
+      downloadAllBtn.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+      qualityRow.classList.add('hidden');
+      formatBtns.forEach(b => b.classList.remove('active'));
+      lockStep(step2);
+      lockStep(step3);
+    });
+
+    // ── Smooth scroll for anchor links ─────────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+          mobileMenu.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
