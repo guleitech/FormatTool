@@ -11,7 +11,7 @@
 
   <!-- 下面依次粘贴你的7个子页面完整URL，一行一个 -->
   <url>
-    <loc>https://goconv.one/gif-to-png.html</loc>
+    <loc>https://goconv.one/gif-to-png</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -27,31 +27,31 @@
   <!-- 剩下5个子页，直接复制上面<url>到</url>这段，改里面的URL就行 -->
 
 <url>
-    <loc>https://goconv.one/jpg-to-png.html</loc>
+    <loc>https://goconv.one/jpg-to-png</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 <url>
-    <loc>https://goconv.one/jpg-to-webp.html</loc>
+    <loc>https://goconv.one/jpg-to-webp</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 <url>
-    <loc>https://goconv.one/png-to-jpg.html</loc>
+    <loc>https://goconv.one/png-to-jpg</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 <url>
-    <loc>https://goconv.one/ipng-to-webp.html</loc>
+    <loc>https://goconv.one/ipng-to-webp</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 <url>
-    <loc>https://goconv.one/webp-to-jpg.html</loc>
+    <loc>https://goconv.one/webp-to-jpg</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
